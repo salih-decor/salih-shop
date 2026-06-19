@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>محل صالح للهدايا والتحف</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #8B5A2B; 
+            --accent-color: #D4AF37; 
+            --dark-color: #2C1A0F; 
+            --light-bg: #FDFBF7; 
+            --btn-whatsapp: #25D366; 
+            --btn-fb: #1877F2; 
+            --price-color: #2E7D32; 
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Cairo', sans-serif; 
+        }
+        
+        html, body { 
+            background-color: var(--light-bg); 
+            color: var(--dark-color); 
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden; 
+            position: relative;
+        }
+
+        /* شاشة الدخول الأولى */
+        #welcome-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: linear-gradient(rgba(44, 26, 15, 0.75), rgba(44, 26, 15, 0.9)), url('images/main-bg.jpg') no-repeat center center/cover;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999; transition: transform 0.8s ease-in-out, opacity 0.5s; text-align: center; padding: 20px;
+        }
+        #welcome-screen.hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+        #welcome-screen h1 { font-family: 'Reem Kufi', sans-serif; font-size: 3rem; color: var(--accent-color); margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.6); font-weight: 900; }
+        #welcome-screen p { color: #fff; font-size: 1.4rem; margin-bottom: 40px; }
+        .enter-btn { background-color: var(--accent-color); color: var(--dark-color); font-size: 1.3rem; font-weight: bold; padding: 15px 40px; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4); transition: all 0.3s ease; }
+        .enter-btn:hover { transform: scale(1.05); background-color: #fff; }
+
+        /* واجهة المحل */
+        header { background-color: var(--dark-color); color: #fff; text-align: center; padding: 25px 15px; border-bottom: 4px solid var(--accent-color); width: 100%; }
+        header h2 { font-family: 'Reem Kufi', sans-serif; font-size: 2.2rem; color: var(--accent-color); }
+        
+        .container { 
+            width: 100%;
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px 15px; 
+            text-align: center; 
+        }
+        
+        .section-title { font-size: 1.6rem; margin: 25px 0; color: var(--primary-color); border-right: 5px solid var(--accent-color); padding-right: 15px; display: inline-block; }
+
+        .category-tabs { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 10px; 
+            margin-bottom: 35px; 
+            width: 100%;
+        }
+        .tab-btn { background-color: #fff; border: 2px solid var(--primary-color); color: var(--primary-color); padding: 10px 20px; font-size: 1rem; font-weight: bold; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; flex-grow: 0; }
+        .tab-btn:hover, .tab-btn.active { background-color: var(--primary-color); color: #fff; box-shadow: 0 4px 10px rgba(139, 90, 43, 0.3); }
+
+        .gallery-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); 
+            gap: 25px; 
+            margin-bottom: 50px; 
+            width: 100%;
+        }
+        
+        .item-card { 
+            background-color: #fff; border-radius: 12px; overflow: hidden; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06); border: 1px solid #eee; 
+            display: flex; flex-direction: column; transition: transform 0.3s ease;
+            width: 100%;
+        }
+        
+        .img-container {
+            width: 100%; height: 300px; background-color: #fcfcfc; 
+            display: flex; align-items: center; justify-content: center; 
+            border-bottom: 1px solid #eee; padding: 10px;
+        }
+        .item-card img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        
+        .item-info { padding: 20px; background-color: #fff; text-align: right; display: flex; flex-direction: column; gap: 8px; }
+        .item-number { font-size: 1.2rem; font-weight: bold; color: var(--primary-color); }
+        .item-type { font-size: 1.1rem; font-weight: 900; color: #000000; margin-bottom: 4px; }
+        
+        /* زر إظهار/إخفاء معلومات الطلب */
+        .toggle-details-btn {
+            background-color: #fff;
+            color: var(--primary-color);
+            border: 1.5px solid var(--primary-color);
+            padding: 8px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .toggle-details-btn:hover {
+            background-color: #f5ebe0;
+        }
+
+        /* صندوق خيارات الاستمارة (مخفي افتراضياً وينزل بسلاسة عند الضغط) */
+        .form-group-box {
+            display: none; /* إخفاء الصندوق بشكل افتراضي */
+            background-color: #FDFBF7;
+            border: 1px solid #E0DCD5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 4px;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .box-title { font-size: 0.95rem; font-weight: bold; color: var(--primary-color); margin-bottom: -2px; display: block; }
+        
+        .row-inputs { display: flex; gap: 10px; }
+        .input-sub-group { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+        
+        .form-label { font-size: 0.9rem; font-weight: bold; color: #444; }
+        .form-select, .form-input {
+            width: 100%;
+            padding: 8px 10px;
+            font-size: 0.95rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #fff;
+            font-weight: bold;
+            color: #333;
+            outline: none;
+        }
+        .form-select:focus, .form-input:focus { border-color: var(--primary-color); }
+
+        .sub-branch-box { display: none; }
+        .address-box { display: flex; }
+        
+        .item-price { font-size: 1.25rem; font-weight: bold; color: var(--price-color); background-color: #E8F5E9; display: inline-block; padding: 4px 14px; border-radius: 6px; align-self: flex-start; margin-top: 5px; margin-bottom: 5px; }
+        .item-cta { font-size: 0.9rem; font-weight: bold; color: #D32F2F; border-top: 1px dashed #ddd; padding-top: 12px; margin-top: 5px; text-align: center; margin-bottom: 8px; line-height: 1.4; }
+
+        .order-whatsapp-btn {
+            background-color: var(--btn-whatsapp);
+            color: #fff;
+            border: none;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+        }
+        .order-whatsapp-btn:hover {
+            transform: translateY(-2px);
+            background-color: #20ba5a;
+        }
+
+        .notice-box { background-color: #FFF9E6; border-right: 6px solid var(--accent-color); padding: 15px; border-radius: 4px; font-size: 1.1rem; font-weight: bold; margin: 40px auto; max-width: 90%; }
+        .contact-btn { display: inline-block; background-color: var(--btn-fb); color: white; text-decoration: none; font-size: 1.2rem; font-weight: bold; padding: 14px 40px; border-radius: 50px; box-shadow: 0 4px 15px rgba(24, 119, 242, 0.4); transition: all 0.3s ease; margin-bottom: 40px; }
+        .contact-btn:hover { transform: translateY(-3px); background-color: #166FE5; }
+        footer { background-color: var(--dark-color); color: #aaa; padding: 15px; font-size: 0.9rem; text-align: center; width: 100%; }
+
+        @media (max-width: 768px) { 
+            #welcome-screen h1 { font-size: 2rem; } 
+            #welcome-screen p { font-size: 1.1rem; }
+            header h2 { font-size: 1.6rem; } 
+            .tab-btn { width: 100%; text-align: center; } 
+            .img-container { height: 260px; } 
+            .section-title { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="welcome-screen">
+        <h1>مرحبا بكم في محل صالح للهدايا والتحف</h1>
+        <p>التميز والفخامة in مكان واحد</p>
+        <button class="enter-btn" onclick="enterShop()">الدخول الى المحل</button>
+    </div>
+
+    <header>
+        <h2>محل صالح للهدايا والتحف</h2>
+    </header>
+
+    <div class="container">
+        <h3 class="section-title">المقاسات والالوان حسب الطلب</h3>
+
+        <div class="category-tabs">
+            <button class="tab-btn active" onclick="filterCategory('all')">كل المعروضات</button>
+            <button class="tab-btn" onclick="filterCategory('shoes')">خزائن أحذية</button>
+            <button class="tab-btn" onclick="filterCategory('books')"> خزائن كتب والديكور</button>
+            <button class="tab-btn" onclick="filterCategory('room-tables')">طاولات الغرفة</button>
+            <button class="tab-btn" onclick="filterCategory('tv-tables')">طاولات التلفاز</button>
+            <button class="tab-btn" onclick="filterCategory('makeup')">كوافيز </button>
+            <button class="tab-btn" onclick="filterCategory('computer')">طاولة حاسوب</button>
+        </div>
+
+        <div class="gallery-grid" id="gallery"></div>
+
+        <div class="notice-box">
+            انتظرو الجديد في صفحة المحل وشكرا
+        </div>
+
+        <a href="https://www.facebook.com/salh.llhdaya.walthf" target="_blank" class="contact-btn">
+            صفحة المحل
+        </a>
+    </div>
+
+    <footer>
+        <p>جميع الحقوق محفوظة لمحل صالح للهدايا والتحف &copy; 2026</p>
+    </footer>
+
+    <script>
+        const MY_PHONE_NUMBER = "213663858079"; 
+
+        function enterShop() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        const products = [
+            { filename: 'shoes-1.jpg', code: '#101', type: 'خزائن أحذية', price: '30000 دج', category: 'shoes' },
+            { filename: 'shoes-2.jpg', code: '#102', type: 'خزائن أحذية', price: '20000 دج', category: 'shoes' },
+            { filename: 'shoes-3.jpg', code: '#103', type: 'خزائن أحذية', price: '30000 دج', category: 'shoes' },
+            { filename: 'shoes-4.jpg', code: '#104', type: 'خزائن أحذية', price: '25000 دج', category: 'shoes' },
+            { filename: 'shoes-5.jpg', code: '#105', type: 'خزائن أحذية', price: '25000 دج', category: 'shoes' },
+            { filename: 'shoes-6.jpg', code: '#106', type: 'خزائن أحذية', price: '18000 دج', category: 'shoes' },
+            { filename: 'shoes-7.jpg', code: '#107', type: 'خزائن أحذية', price: '18000 دج', category: 'shoes' },
+            { filename: 'shoes-8.jpg', code: '#108', type: 'خزائن أحذية', price: '35000 دج', category: 'shoes' },
+            { filename: 'shoes-9.jpg', code: '#109', type: 'خزائن أحذية', price: '35000 دج', category: 'shoes' },
+            { filename: 'shoes-10.jpg', code: '#110', type: 'خزائن أحذية', price: '35000 دج', category: 'shoes' },
+            { filename: 'shoes-11.jpg', code: '#111', type: 'خزائن أحذية', price: '12000 دج', category: 'shoes' },
+            { filename: 'shoes-12.jpg', code: '#112', type: 'خزائن أحذية', price: '12000 دج', category: 'shoes' },
+            { filename: 'shoes-13.jpg', code: '#113', type: 'خزائن أحذية', price: '12000 دج', category: 'shoes' },
+            { filename: 'shoes-14.jpg', code: '#114', type: 'خزائن أحذية', price: '12000 دج', category: 'shoes' },
+            { filename: 'shoes-15.jpg', code: '#115', type: 'خزائن أحذية', price: '9500 دج', category: 'shoes' },
+            { filename: 'shoes-16.jpg', code: '#116', type: 'خزائن أحذية', price: '9500 دج', category: 'shoes' },
+            { filename: 'shoes-17.jpg', code: '#117', type: 'خزائن أحذية', price: '18000 دج', category: 'shoes' },
+            { filename: 'shoes-18.jpg', code: '#118', type: 'خزائن أحذية', price: '18000 دج', category: 'shoes' },
+            { filename: 'shoes-19.jpg', code: '#119', type: 'خزائن أحذية', price: '23000 دج', category: 'shoes' },
+            { filename: 'shoes-20.jpg', code: '#120', type: 'خزائن أحذية', price: '23000 دج', category: 'shoes' },
+            { filename: 'shoes-21.jpg', code: '#121', type: 'خزائن أحذية', price: '18000 دج', category: 'shoes' },
+            { filename: 'shoes-22.jpg', code: '#122', type: 'خزائن أحذية', price: '22000 دج', category: 'shoes' },
+            { filename: 'shoes-23.jpg', code: '#123', type: 'خزائن أحذية', price: '18000 دج', category: 'shoes' },
+            { filename: 'shoes-24.jpg', code: '#124', type: 'خزائن أحذية', price: '14000 دج', category: 'shoes' },
+            { filename: 'shoes-25.jpg', code: '#125', type: 'خزائن أحذية', price: '25000 دج', category: 'shoes' },
+            { filename: 'shoes-26.jpg', code: '#126', type: 'خزائن أحذية', price: '25000 دج', category: 'shoes' },
+            { filename: 'shoes-27.jpg', code: '#127', type: 'خزائن أحذية', price: '28000 دج', category: 'shoes' },
+            { filename: 'shoes-28.jpg', code: '#128', type: 'خزائن أحذية', price: '28000 دج', category: 'shoes' },
+            { filename: 'shoes-29.jpg', code: '#129', type: 'خزائن أحذية', price: '28000 دج', category: 'shoes' },
+            { filename: 'shoes-30.jpg', code: '#130', type: 'خزائن أحذية', price: '28000 دج', category: 'shoes' },
+            { filename: 'shoes-31.jpg', code: '#131', type: 'خزائن أحذية', price: '28000 دج', category: 'shoes' },
+            { filename: 'shoes-32.jpg', code: '#132', type: 'خزائن أحذية', price: '28000 دج', category: 'shoes' },
+            { filename: 'shoes-33.jpg', code: '#133', type: 'خزائن أحذية', price: '28000 دج', category: 'shoes' },
+            { filename: 'shoes-34.jpg', code: '#134', type: 'خزائن أحذية', price: '9000 دج', category: 'shoes' },
+            { filename: 'shoes-35.jpg', code: '#135', type: 'خزائن أحذية', price: '9000 دج', category: 'shoes' },
+            { filename: 'shoes-36.jpg', code: '#136', type: 'خزائن أحذية', price: '9000 دج', category: 'shoes' },
+            { filename: 'shoes-37.jpg', code: '#137', type: 'خزائن أحذية', price: '9000 دج', category: 'shoes' },
+            { filename: 'shoes-38.jpg', code: '#138', type: 'خزائن أحذية', price: '3500 دج', category: 'shoes' },
+            { filename: 'shoes-39.jpg', code: '#139', type: 'خزائن أحذية', price: '3500 دج', category: 'shoes' },
+            { filename: 'shoes-40.jpg', code: '#140', type: 'خزائن أحذية', price: '3500 دج', category: 'shoes' },
+            { filename: 'shoes-41.jpg', code: '#141', type: 'خزائن أحذية', price: '23000 دج', category: 'shoes' },
+            { filename: 'shoes-42.jpg', code: '#142', type: 'خزائن أحذية', price: '28000دج', category: 'shoes' },
+            { filename: 'shoes-43.jpg', code: '#143', type: 'خزائن أحذية', price: '28000 دج', category: 'shoes' },
+        { filename: 'shoes-44.jpg', code: '#144', type: 'خزائن أحذية', price: '30000 دج', category: 'shoes' },
+        
+
+
+            { filename: 'books-1.jpg', code: '#201', type: 'خزائن كتب', price: '7500 دج', category: 'books' },
+
+
+
+
+           { filename: 'room-1.jpg', code: '#301', type: 'طاولات الغرفة', price: '25000 دج', category: 'room-tables' },
+{ filename: 'room-2.jpg', code: '#302', type: 'طاولات الغرفة', price: '25000 دج', category: 'room-tables' },
+{ filename: 'room-3.jpg', code: '#303', type: 'طاولات الغرفة', price: '7000 دج', category: 'room-tables' },
+{ filename: 'room-4.jpg', code: '#304', type: 'طاولات الغرفة', price: '3500 دج', category: 'room-tables' },
+{ filename: 'room-5.jpg', code: '#305', type: 'طاولات الغرفة', price: '2500 دج', category: 'room-tables' },
+{ filename: 'room-6.jpg', code: '#306', type: 'طاولات الغرفة', price: '23000 دج', category: 'room-tables' },
+{ filename: 'room-7.jpg', code: '#307', type: 'طاولات الغرفة', price: '18000 دج', category: 'room-tables' },
+{ filename: 'room-8.jpg', code: '#308', type: 'طاولات الغرفة', price: '18000 دج', category: 'room-tables' },
+{ filename: 'room-9.jpg', code: '#309', type: 'طاولات الغرفة', price: '18000 دج', category: 'room-tables' },
+{ filename: 'room-10.jpg', code: '#310', type: 'طاولات الغرفة', price: '18000 دج', category: 'room-tables' },
+{ filename: 'room-11.jpg', code: '#311', type: 'طاولات الغرفة', price: '18000 دج', category: 'room-tables' },
+{ filename: 'room-12.jpg', code: '#312', type: 'طاولات الغرفة', price: '18000 دج', category: 'room-tables' },
+{ filename: 'room-13.jpg', code: '#313', type: 'طاولات الغرفة', price: '18000 دج', category: 'room-tables' },
+{ filename: 'room-14.jpg', code: '#314', type: 'طاولات الغرفة', price: '18000 دج', category: 'room-tables' },
+{ filename: 'room-15.jpg', code: '#315', type: 'طاولات الغرفة', price: '20000 دج', category: 'room-tables' },
+{ filename: 'room-16.jpg', code: '#316', type: 'طاولات الغرفة', price: '18000 دج', category: 'room-tables' },
+{ filename: 'room-17.jpg', code: '#317', type: 'طاولات الغرفة', price: '16000 دج', category: 'room-tables' },
+{ filename: 'room-18.jpg', code: '#318', type: 'طاولات الغرفة', price: '18000 دج', category: 'room-tables' },
+{ filename: 'room-19.jpg', code: '#319', type: 'طاولات الغرفة', price: '18000 دج', category: 'room-tables' },
+{ filename: 'room-20.jpg', code: '#320', type: 'طاولات الغرفة', price: '18000 دج', category: 'room-tables' },
+{ filename: 'room-21.jpg', code: '#321', type: 'طاولات الغرفة', price: '18000 دج', category: 'room-tables' },
+{ filename: 'room-22.jpg', code: '#322', type: 'طاولات الغرفة', price: '18000 دج', category: 'room-tables' },
+{ filename: 'room-23.jpg', code: '#323', type: 'طاولات الغرفة', price: '20000 دج', category: 'room-tables' },
+{ filename: 'room-24.jpg', code: '#324', type: 'طاولات الغرفة', price: '18000 دج', category: 'room-tables' },
+
+
+
+
+            { filename: 'tv-1.jpg', code: '#401', type: 'طاولات التلفاز', price: '25000 دج', category: 'tv-tables' },
+{ filename: 'tv-2.jpg', code: '#402', type: 'طاولات التلفاز', price: '25000 دج', category: 'tv-tables' },
+{ filename: 'tv-3.jpg', code: '#403', type: 'طاولات التلفاز', price: '20000 دج', category: 'tv-tables' },
+{ filename: 'tv-4.jpg', code: '#404', type: 'طاولات التلفاز', price: '20000 دج', category: 'tv-tables' },
+{ filename: 'tv-5.jpg', code: '#405', type: 'طاولات التلفاز', price: '20000 دج', category: 'tv-tables' },
+{ filename: 'tv-6.jpg', code: '#406', type: 'طاولات التلفاز', price: '20000 دج', category: 'tv-tables' },
+{ filename: 'tv-7.jpg', code: '#407', type: 'طاولات التلفاز', price: '17000 دج', category: 'tv-tables' },
+{ filename: 'tv-8.jpg', code: '#408', type: 'طاولات التلفاز', price: '9500 دج', category: 'tv-tables' },
+{ filename: 'tv-9.jpg', code: '#409', type: 'طاولات التلفاز', price: '11000 دج', category: 'tv-tables' },
+{ filename: 'tv-10.jpg', code: '#410', type: 'طاولات التلفاز', price: '11000 دج', category: 'tv-tables' },
+{ filename: 'tv-11.jpg', code: '#411', type: 'طاولات التلفاز', price: '50000 دج', category: 'tv-tables' },
+{ filename: 'tv-12.jpg', code: '#412', type: 'طاولات التلفاز', price: '80000 دج', category: 'tv-tables' },
+{ filename: 'tv-13.jpg', code: '#413', type: 'طاولات التلفاز', price: '11000 دج', category: 'tv-tables' },
+{ filename: 'tv-14.jpg', code: '#414', type: 'طاولات التلفاز', price: '25000 دج', category: 'tv-tables' },
+{ filename: 'tv-15.jpg', code: '#415', type: 'طاولات التلفاز', price: '30000 دج', category: 'tv-tables' },
+{ filename: 'tv-16.jpg', code: '#416', type: 'طاولات التلفاز', price: '25000 دج', category: 'tv-tables' },
+{ filename: 'tv-17.jpg', code: '#417', type: 'طاولات التلفاز', price: '35000 دج', category: 'tv-tables' },
+{ filename: 'tv-18.jpg', code: '#418', type: 'طاولات التلفاز', price: '30000 دج', category: 'tv-tables' },
+{ filename: 'tv-19.jpg', code: '#419', type: 'طاولات التلفاز', price: '30000 دج', category: 'tv-tables' },
+{ filename: 'tv-20.jpg', code: '#420', type: 'طاولات التلفاز', price: '30000 دج', category: 'tv-tables' },
+{ filename: 'tv-21.jpg', code: '#421', type: 'طاولات التلفاز', price: '9000 دج', category: 'tv-tables' },
+{ filename: 'tv-22.jpg', code: '#422', type: 'طاولات التلفاز', price: '11000 دج', category: 'tv-tables' },
+{ filename: 'tv-23.jpg', code: '#423', type: 'طاولات التلفاز', price: '17000 دج', category: 'tv-tables' },
+{ filename: 'tv-24.jpg', code: '#424', type: 'طاولات التلفاز', price: '9000 دج', category: 'tv-tables' },
+
+
+
+
+
+
+            { filename: 'makeup-1.jpg', code: '#501', type: 'كوافيز', price: '30000 دج', category: 'makeup' },
+{ filename: 'makeup-2.jpg', code: '#502', type: 'كوافيز', price: '38000 دج', category: 'makeup' },
+{ filename: 'makeup-3.jpg', code: '#503', type: 'كوافيز', price: '35000 دج', category: 'makeup' },
+{ filename: 'makeup-4.jpg', code: '#504', type: 'كوافيز', price: '30000 دج', category: 'makeup' },
+{ filename: 'makeup-5.jpg', code: '#505', type: 'كوافيز', price: '35000 دج', category: 'makeup' },
+{ filename: 'makeup-6.jpg', code: '#506', type: 'كوافيز', price: '38000 دج', category: 'makeup' },
+{ filename: 'makeup-7.jpg', code: '#507', type: 'كوافيز', price: '35000 دج', category: 'makeup' },
+{ filename: 'makeup-8.jpg', code: '#508', type: 'كوافيز', price: '25000 دج', category: 'makeup' },
+{ filename: 'makeup-9.jpg', code: '#509', type: 'كوافيز', price: '38000 دج', category: 'makeup' },
+{ filename: 'makeup-10.jpg', code: '#510', type: 'كوافيز', price: '20000 دج', category: 'makeup' },
+{ filename: 'makeup-11.jpg', code: '#511', type: 'كوافيز', price: '20000 دج', category: 'makeup' },
+{ filename: 'makeup-12.jpg', code: '#512', type: 'كوافيز', price: '20000 دج', category: 'makeup' },
+
+
+            { filename: 'computer-1.jpg', code: '#601', type: 'طاولة حاسوب', price: '6500 دج', category: 'computer' }
+
+
+        ];
+
+        const gallery = document.getElementById('gallery');
+        
+        function generateNumericOptions() {
+            let options = '<option value="عادي">عادي</option>';
+            for(let i = 1; i <= 180; i++) {
+                options += `<option value="${i} سم">${i} سم</option>`;
+            }
+            return options;
+        }
+
+        // دالة ذكية لإظهار وإخفاء القائمة عند ضغط الزر
+        function toggleProductDetails(suffix) {
+            const box = document.getElementById(`box-${suffix}`);
+            const btn = document.getElementById(`btn-toggle-${suffix}`);
+            if (box.style.display === "none" || box.style.display === "") {
+                box.style.display = "flex";
+                btn.innerHTML = "إخفاء معلومات الطلب ⬆️";
+                btn.style.backgroundColor = "#e2d7cd";
+            } else {
+                box.style.display = "none";
+                btn.innerHTML = "معلومات الطلب أو الاستفسار 📐🎨";
+                btn.style.backgroundColor = "#fff";
+            }
+        }
+
+        function renderProducts(filter = 'all') {
+            gallery.innerHTML = ''; 
+            const sizeOptions = generateNumericOptions();
+            
+            products.forEach(prod => {
+                if(filter === 'all' || prod.category === filter) {
+                    const card = document.createElement('div');
+                    card.className = 'item-card';
+                    const suffix = prod.code.replace('#', '');
+                    
+                    card.innerHTML = `
+                        <div class="img-container">
+                            <img src="images/${prod.filename}" alt="${prod.type}">
+                        </div>
+                        <div class="item-info">
+                            <div class="item-number">رقم القطعة: ${prod.code}</div>
+                            <div class="item-type">النوع: ${prod.type}</div>
+                            
+                            <button class="toggle-details-btn" id="btn-toggle-${suffix}" onclick="toggleProductDetails('${suffix}')">
+                                معلومات الطلب أو الاستفسار 📐🎨
+                            </button>
+
+                            <div class="form-group-box" id="box-${suffix}">
+                                <span class="box-title">📐 اختر المقاس المناسب لك:</span>
+                                <div class="row-inputs">
+                                    <div class="input-sub-group">
+                                        <label class="form-label">الارتفاع:</label>
+                                        <select class="form-select" id="height-${suffix}">${sizeOptions}</select>
+                                    </div>
+                                    <div class="input-sub-group">
+                                        <label class="form-label">العرض:</label>
+                                        <select class="form-select" id="width-${suffix}">${sizeOptions}</select>
+                                    </div>
+                                </div>
+
+                                <span class="box-title">🎨 اختر اللون المفضّل:</span>
+                                <select class="form-select" id="color-${suffix}">
+                                    <option value="باج">باج</option>
+                                    <option value="أسود">أسود</option>
+                                    <option value="أبيض">أبيض</option>
+                                    <option value="بني">بني</option>
+                                </select>
+
+                                <span class="box-title">📍 معلومات التوصيل:</span>
+                                <div class="input-sub-group">
+                                    <label class="form-label">الولاية:</label>
+                                    <select class="form-select" id="state-${suffix}" onchange="handleStateChange('${suffix}')">
+                                        <option value="عين صالح">عين صالح</option>
+                                        <option value="أدرار">أدرار</option>
+                                        <option value="تمنراست">تمنراست</option>
+                                    </select>
+                                </div>
+
+                                <div class="input-sub-group sub-branch-box" id="branch-box-${suffix}">
+                                    <label class="form-label" id="branch-label-${suffix}">الدائرة / الفرع:</label>
+                                    <select class="form-select" id="branch-${suffix}" onchange="handleBranchChange('${suffix}')"></select>
+                                </div>
+
+                                <div class="input-sub-group address-box" id="address-box-${suffix}">
+                                    <label class="form-label" id="address-label-${suffix}">العنوان / الحي:</label>
+                                    <input type="text" class="form-input" id="address-${suffix}" placeholder="اكتب اسم الحي أو الشارع الحالي">
+                                </div>
+
+                                <div class="input-sub-group">
+                                    <label class="form-label">رقم الهاتف:</label>
+                                    <input type="tel" class="form-input" id="phone-${suffix}" placeholder="06xxxxxxxx">
+                                </div>
+
+                                <button class="order-whatsapp-btn" onclick="sendWhatsAppOrder('${prod.code}', '${prod.type}', '${prod.price}', '${suffix}')">
+                                    💬 ارسال المعلومات لصاحب المحل
+                                </button>
+                            </div>
+                            
+                            <div class="item-price">السعر: ${prod.price}</div>
+                            <div class="item-cta">ملاحظة: يتغير السعر كلما تغير المقاس ولمعرفة المقاس الاصلي اضغط على ارسال المعلومات لصاحب المحل واسأل وشكرا</div>
+                        </div>
+                    `;
+                    gallery.appendChild(card);
+                    handleStateChange(suffix);
+                }
+            });
+        }
+
+        function handleStateChange(suffix) {
+            const stateSelect = document.getElementById(`state-${suffix}`);
+            const branchBox = document.getElementById(`branch-box-${suffix}`);
+            const branchSelect = document.getElementById(`branch-${suffix}`);
+            const addressBox = document.getElementById(`address-box-${suffix}`);
+            const addressLabel = document.getElementById(`address-label-${suffix}`);
+            const addressInput = document.getElementById(`address-${suffix}`);
+            
+            const selectedState = stateSelect.value;
+
+            if (selectedState === "عين صالح") {
+                if(branchBox) branchBox.style.display = "flex";
+                if(addressBox) addressBox.style.display = "flex"; 
+                if(addressLabel) addressLabel.innerText = "العنوان / الحي:";
+                if(addressInput) addressInput.placeholder = "اكتب اسم الحي أو الشارع الحالي";
+                
+                if(branchSelect) {
+                    branchSelect.innerHTML = `
+                        <option value="عين صالح">عين صالح</option>
+                        <option value="الساهلة">الساهلة</option>
+                        <option value="فقارة الزوى">فقارة الزوى</option>
+                        <option value="فقارة العرب">فقارة العرب</option>
+                        <option value="البركة">البركة</option>
+                    `;
+                }
+            } 
+            else if (selectedState === "أدرار") {
+                if(branchBox) branchBox.style.display = "flex";
+                
+                if(branchSelect) {
+                    branchSelect.innerHTML = `
+                        <option value="أدرار">أدرار</option>
+                        <option value="أولف">أولف</option>
+                        <option value="إينغر">إينغر</option>
+                    `;
+                }
+                handleBranchChange(suffix);
+            } 
+            else if (selectedState === "تمنراست") {
+                if(branchBox) branchBox.style.display = "none";
+                if(branchSelect) branchSelect.innerHTML = ""; 
+                if(addressBox) addressBox.style.display = "flex";
+                if(addressLabel) addressLabel.innerText = "الدائرة والحي بالتفصيل:";
+                if(addressInput) addressInput.placeholder = "مثال: دائرة إن قزام - حي 50 مسكن";
+            }
+        }
+
+        function handleBranchChange(suffix) {
+            const stateSelect = document.getElementById(`state-${suffix}`);
+            const branchSelect = document.getElementById(`branch-${suffix}`);
+            const addressBox = document.getElementById(`address-box-${suffix}`);
+            const addressLabel = document.getElementById(`address-label-${suffix}`);
+            const addressInput = document.getElementById(`address-${suffix}`);
+
+            if (stateSelect && stateSelect.value === "أدرار") {
+                if (branchSelect && branchSelect.value === "أدرار") {
+                    if(addressBox) addressBox.style.display = "flex"; 
+                    if(addressLabel) addressLabel.innerText = "العنوان / الحي:";
+                    if(addressInput) addressInput.placeholder = "اكتب اسم الحي في مدينة أدرار";
+                } else {
+                    if(addressBox) addressBox.style.display = "none"; 
+                }
+            }
+        }
+
+        function sendWhatsAppOrder(code, type, price, suffix) {
+            const height = document.getElementById(`height-${suffix}`).value;
+            const width = document.getElementById(`width-${suffix}`).value;
+            const color = document.getElementById(`color-${suffix}`).value;
+            const state = document.getElementById(`state-${suffix}`).value;
+            const phone = document.getElementById(`phone-${suffix}`).value || "لم يتم كتابته";
+            
+            const addressBox = document.getElementById(`address-box-${suffix}`);
+            let address = "لم يتم كتابته";
+            
+            if (addressBox && addressBox.style.display !== "none") {
+                address = document.getElementById(`address-${suffix}`).value || "لم يتم كتابته";
+            }
+            
+            let locationDetails = `الولاية: ${state}`;
+            if (state === "عين صالح" || state === "أدرار") {
+                const branch = document.getElementById(`branch-${suffix}`).value;
+                locationDetails += ` (${branch})`;
+            }
+
+            const message = `مرحبا صالح، أريد إرسال معلومات طلبي للاستفسار:\n\n` +
+                            `🔹 القطعة: ${type} (${code})\n` +
+                            `📏 المقاس المطلوب -> الارتفاع: ${height} | العرض: ${width}\n` +
+                            `🎨 اللون المطلوب: ${color}\n` +
+                            `📍 مكان التوصيل: ${locationDetails}\n` +
+                            `🏠 تفاصيل العنوان: ${address}\n` +
+                            `📞 رقم هاتف الزبون: ${phone}\n` +
+                            `💰 السعر: ${price}`;
+            
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${MY_PHONE_NUMBER}?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function filterCategory(category) {
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+            renderProducts(category);
+        }
+
+        renderProducts();
+    </script>
+</body>
+</html>
