@@ -400,8 +400,7 @@
             } else {
                 box.style.display = "none";
                 btn.innerHTML = "اضغط هنا للطلب او الاستفسار ";
-                btn.style.backgroundColor = "#0F0";
-            }
+                btn.style.backgroundColor = "#fff"; 
         }
 
         function renderProducts(filter = 'all') {
@@ -423,7 +422,7 @@
                             <div class="item-type">النوع: ${prod.type}</div>
                             
                             <button class="toggle-details-btn" id="btn-toggle-${suffix}" onclick="toggleProductDetails('${suffix}')">
-                                معلومات الطلب أو الاستفسار 📐🎨
+                                اضغط هنا للطلب أو الاستفسار
                             </button>
 
                             <div class="form-group-box" id="box-${suffix}">
